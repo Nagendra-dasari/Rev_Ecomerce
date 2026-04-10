@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGO_URI=${MONGO_URI}
+      - SECRET_KEY=${SECRET_KEY}
+      - API_V1_PREFIX=/api/v1
+    depends_on:
+      - mongo
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+
+  mongo:
+    image: mongo:7.0
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
