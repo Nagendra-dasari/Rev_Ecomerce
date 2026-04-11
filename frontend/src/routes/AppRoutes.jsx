@@ -2,6 +2,7 @@ import React from "react";
 
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useSelector } from "react-redux";
+import Box from "@mui/material/Box";
 
 import Navbar from "../components/layout/Navbar";
 import Dashboard from "../pages/Dashboard";
@@ -18,31 +19,33 @@ function ProtectedRoute({ children }) {
 
 function AppRoutes() {
   return (
-    <div className="app-shell">
+    <Box sx={{ display: "flex", flexDirection: "column", flex: 1, minHeight: "100vh" }}>
       <Navbar />
-      <Routes>
-        <Route element={<Home />} path="/" />
-        <Route element={<LoginPage />} path="/login" />
-        <Route element={<Product />} path="/products/:productId" />
-        <Route element={<Cart />} path="/cart" />
-        <Route
-          element={
-            <ProtectedRoute>
-              <Checkout />
-            </ProtectedRoute>
-          }
-          path="/checkout"
-        />
-        <Route
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-          path="/dashboard"
-        />
-      </Routes>
-    </div>
+      <Box component="main" sx={{ flex: 1 }}>
+        <Routes>
+          <Route element={<Home />} path="/" />
+          <Route element={<LoginPage />} path="/login" />
+          <Route element={<Product />} path="/products/:productId" />
+          <Route element={<Cart />} path="/cart" />
+          <Route
+            element={
+              <ProtectedRoute>
+                <Checkout />
+              </ProtectedRoute>
+            }
+            path="/checkout"
+          />
+          <Route
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+            path="/dashboard"
+          />
+        </Routes>
+      </Box>
+    </Box>
   );
 }
 

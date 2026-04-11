@@ -1,7 +1,18 @@
 import React, { useEffect, useState } from "react";
 
-import { Link, useParams } from "react-router-dom";
+import { Link as RouterLink, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import MuiLink from "@mui/material/Link";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import Chip from "@mui/material/Chip";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
@@ -102,104 +113,135 @@ function Product() {
   };
 
   if (!product) {
-    return <div className="page">Loading product...</div>;
+    return (
+      <Container sx={{ py: 4 }}>
+        <Typography>Loading product...</Typography>
+      </Container>
+    );
   }
 
   return (
-    <div className="page stack-lg">
-      <section className="layout-grid">
-        <article className="product-card">
-          <img alt={product.name} src={product.image} />
-          <div className="product-meta">
-            <span className="tag">{product.category}</span>
-            <span>
-              {product.review_summary.average_rating} / 5 from {product.review_summary.total_reviews} reviews
-            </span>
-          </div>
-          <h1>{product.name}</h1>
-          <p className="muted">{product.description}</p>
-          <div className="chip-row">
-            {product.tags.map((tag) => (
-              <span className="chip" key={tag}>
-                {tag}
-              </span>
-            ))}
-          </div>
-          <div className="space-between" style={{ marginTop: 16 }}>
-            <strong>{formatCurrency(product.price)}</strong>
-            <span className="muted">Stock {product.stock}</span>
-          </div>
-          <div className="chip-row" style={{ marginTop: 16 }}>
-            <Button onClick={handleAddToCart}>Add to cart</Button>
-            {user ? (
-              <Button variant="secondary" onClick={toggleWishlist}>
-                {wishlistIds.includes(productId) ? "Remove wishlist" : "Add wishlist"}
-              </Button>
+    <Container maxWidth="lg" sx={{ py: 3, flex: 1 }}>
+      <Grid container spacing={3}>
+        <Grid size={{ xs: 12, md: 8 }}>
+          <Card variant="outlined">
+            <CardMedia alt={product.name} component="img" image={product.image} sx={{ maxHeight: 360, objectFit: "cover" }} />
+            <CardContent>
+              <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mb: 2 }}>
+                <Chip label={product.category} />
+                <Chip
+                  label={`${product.review_summary.average_rating} / 5 from ${product.review_summary.total_reviews} reviews`}
+                  variant="outlined"
+                />
+              </Stack>
+              <Typography gutterBottom variant="h4">
+                {product.name}
+              </Typography>
+              <Typography color="text.secondary" paragraph>
+                {product.description}
+              </Typography>
+              <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mb: 2 }}>
+                {product.tags.map((tag) => (
+                  <Chip key={tag} label={tag} size="small" variant="outlined" />
+                ))}
+              </Stack>
+              <Stack alignItems="center" direction="row" justifyContent="space-between" sx={{ mb: 2 }}>
+                <Typography variant="h5">{formatCurrency(product.price)}</Typography>
+                <Typography color="text.secondary">Stock {product.stock}</Typography>
+              </Stack>
+              <Stack direction="row" flexWrap="wrap" gap={1}>
+                <Button onClick={handleAddToCart}>Add to cart</Button>
+                {user ? (
+                  <Button variant="secondary" onClick={toggleWishlist}>
+                    {wishlistIds.includes(productId) ? "Remove wishlist" : "Add wishlist"}
+                  </Button>
+                ) : null}
+                <Button component={RouterLink} to="/cart" variant="ghost">
+                  Open cart
+                </Button>
+              </Stack>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Paper sx={{ p: 2 }} variant="outlined">
+            <Typography gutterBottom variant="h6">
+              Related products
+            </Typography>
+            <Stack spacing={1}>
+              {product.related_products.map((relatedProduct) => (
+                <MuiLink
+                  key={relatedProduct.id}
+                  component={RouterLink}
+                  to={`/products/${relatedProduct.id}`}
+                  underline="hover"
+                  variant="body2"
+                >
+                  {relatedProduct.name}
+                </MuiLink>
+              ))}
+            </Stack>
+            {product.related_products.length === 0 ? (
+              <Typography color="text.secondary" variant="body2">
+                No related products found yet.
+              </Typography>
             ) : null}
-            <Link to="/cart">
-              <Button variant="ghost">Open cart</Button>
-            </Link>
-          </div>
-        </article>
-        <aside className="panel stack-md">
-          <h3>Related products</h3>
-          {product.related_products.map((relatedProduct) => (
-            <Link key={relatedProduct.id} to={`/products/${relatedProduct.id}`}>
-              <span className="chip">{relatedProduct.name}</span>
-            </Link>
-          ))}
-          {product.related_products.length === 0 ? <p className="muted">No related products found yet.</p> : null}
-          {user ? (
-            <form onSubmit={submitReview}>
-              <h3 style={{ marginTop: 20 }}>Write a review</h3>
-              <Input
-                label="Rating"
-                type="number"
-                min="1"
-                max="5"
-                value={reviewForm.rating}
-                onChange={(event) => setReviewForm((current) => ({ ...current, rating: event.target.value }))}
-              />
-              <Input
-                label="Title"
-                value={reviewForm.title}
-                onChange={(event) => setReviewForm((current) => ({ ...current, title: event.target.value }))}
-              />
-              <Input
-                label="Comment"
-                value={reviewForm.comment}
-                onChange={(event) => setReviewForm((current) => ({ ...current, comment: event.target.value }))}
-              />
-              <Button type="submit">Post review</Button>
-            </form>
-          ) : (
-            <p className="muted">Login to add reviews and helpful votes.</p>
-          )}
-        </aside>
-      </section>
-      {error ? <p className="error">{error}</p> : null}
-      <section className="stack-lg">
-        {reviews.map((review) => (
-          <article className="panel" key={review.id}>
-            <div className="space-between">
-              <div>
-                <strong>{review.title}</strong>
-                <p className="muted" style={{ marginTop: 8 }}>
-                  {review.user_name} | {review.rating} / 5
-                </p>
-              </div>
-              <span className="tag">{new Date(review.created_at).toLocaleDateString()}</span>
-            </div>
-            <p>{review.comment}</p>
             {user ? (
-              <Button variant="ghost" onClick={() => helpfulVote(review.id)}>
+              <Box component="form" onSubmit={submitReview} sx={{ mt: 3 }}>
+                <Typography gutterBottom variant="subtitle1">
+                  Write a review
+                </Typography>
+                <Input
+                  inputProps={{ min: 1, max: 5 }}
+                  label="Rating"
+                  type="number"
+                  value={reviewForm.rating}
+                  onChange={(event) => setReviewForm((current) => ({ ...current, rating: event.target.value }))}
+                />
+                <Input label="Title" value={reviewForm.title} onChange={(event) => setReviewForm((current) => ({ ...current, title: event.target.value }))} />
+                <Input label="Comment" value={reviewForm.comment} onChange={(event) => setReviewForm((current) => ({ ...current, comment: event.target.value }))} />
+                <Button type="submit">Post review</Button>
+              </Box>
+            ) : (
+              <Typography color="text.secondary" sx={{ mt: 2 }} variant="body2">
+                Login to add reviews and helpful votes.
+              </Typography>
+            )}
+          </Paper>
+        </Grid>
+      </Grid>
+      {error ? (
+        <Typography color="error" sx={{ mt: 2 }} variant="body2">
+          {error}
+        </Typography>
+      ) : null}
+      <Stack spacing={2} sx={{ mt: 4 }}>
+        <Typography variant="h6">
+          Reviews
+        </Typography>
+        {reviews.map((review) => (
+          <Paper key={review.id} sx={{ p: 2 }} variant="outlined">
+            <Stack alignItems="flex-start" direction={{ xs: "column", sm: "row" }} justifyContent="space-between" spacing={1}>
+              <Box>
+                <Typography fontWeight={600}>{review.title}</Typography>
+                <Typography color="text.secondary" variant="body2">
+                  {review.user_name} | {review.rating} / 5
+                </Typography>
+              </Box>
+              <Chip label={new Date(review.created_at).toLocaleDateString()} size="small" />
+            </Stack>
+            <Typography sx={{ mt: 1 }} variant="body1">
+              {review.comment}
+            </Typography>
+            {user ? (
+              <Button sx={{ mt: 1 }} variant="ghost" onClick={() => helpfulVote(review.id)}>
                 Helpful ({review.helpful_votes})
               </Button>
             ) : null}
-          </article>
+          </Paper>
         ))}
-      </section>
-    </div>
+      </Stack>
+    </Container>
   );
 }
 

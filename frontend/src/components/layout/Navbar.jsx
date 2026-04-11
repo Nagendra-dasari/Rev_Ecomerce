@@ -1,9 +1,13 @@
 import React from "react";
 
-import { Link, useNavigate } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
 
-import Button from "../ui/Button";
 import { logout } from "../../features/auth/authSlice";
 import { resetCart } from "../../store/cartSlice";
 
@@ -19,42 +23,40 @@ function Navbar() {
   };
 
   return (
-    <header style={{ borderBottom: "1px solid #dbe1ea", background: "#ffffff", padding: "16px 0" }}>
-      <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 16px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "16px" }}>
-        <div>
+    <AppBar color="inherit" elevation={1} position="sticky" sx={{ borderBottom: 1, borderColor: "divider" }}>
+      <Toolbar sx={{ maxWidth: 1200, width: "100%", mx: "auto", px: { xs: 2, sm: 3 } }}>
+        <Typography component="div" sx={{ flexGrow: 1, fontWeight: 700 }} variant="h6">
           {user ? (
-            <strong style={{ fontSize: "18px" }}>Nagendra Commerce</strong>
+            "Nagendra Commerce"
           ) : (
-            <Link to="/" style={{ textDecoration: "none" }}>
-              <strong style={{ fontSize: "18px" }}>Nagendra Commerce</strong>
-            </Link>
+            <Button color="inherit" component={RouterLink} sx={{ fontWeight: 700, fontSize: "1.25rem" }} to="/">
+              Nagendra Commerce
+            </Button>
           )}
-        </div>
-        <nav style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
           {user ? (
             <>
-              <span style={{ fontSize: "14px", color: "#6b7280" }}>{user.name}</span>
-              <Button onClick={handleLogout} style={{ padding: "8px 16px", cursor: "pointer" }}>
+              <Typography color="text.secondary" variant="body2">
+                {user.name}
+              </Typography>
+              <Button color="primary" onClick={handleLogout} variant="outlined">
                 Logout
               </Button>
             </>
           ) : (
             <>
-              <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-                <span style={{ padding: "8px 12px", borderRadius: "999px", background: "#eef2ff", color: "#334155", fontSize: "14px", display: "inline-block" }}>
-                  Home
-                </span>
-              </Link>
-              <Link to="/login" style={{ textDecoration: "none", color: "inherit" }}>
-                <span style={{ padding: "8px 12px", borderRadius: "999px", background: "#eef2ff", color: "#334155", fontSize: "14px", display: "inline-block" }}>
-                  Login
-                </span>
-              </Link>
+              <Button color="primary" component={RouterLink} to="/" variant="text">
+                Home
+              </Button>
+              <Button color="primary" component={RouterLink} to="/login" variant="contained">
+                Login
+              </Button>
             </>
           )}
-        </nav>
-      </div>
-    </header>
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 }
 

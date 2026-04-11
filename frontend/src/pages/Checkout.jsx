@@ -2,6 +2,16 @@ import React, { useEffect, useMemo, useState } from "react";
 
 import { Navigate, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import FormControl from "@mui/material/FormControl";
+import Grid from "@mui/material/Grid";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Paper from "@mui/material/Paper";
+import Select from "@mui/material/Select";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
@@ -107,70 +117,102 @@ function Checkout() {
   };
 
   return (
-    <div className="page">
-      <section className="hero-card">
-        <span className="tag">Checkout & Payments</span>
-        <h1 className="hero-title" style={{ fontSize: 30 }}>
+    <Container maxWidth="lg" sx={{ py: 3, flex: 1 }}>
+      <Paper sx={{ mb: 3, p: 2 }} variant="outlined">
+        <Typography color="primary" sx={{ fontWeight: 600, mb: 1 }} variant="overline">
+          Checkout & Payments
+        </Typography>
+        <Typography gutterBottom variant="h4">
           Confirm address and payment
-        </h1>
-        <p className="hero-subtitle">Pick a saved address or enter a new one, then simulate payment and place the order.</p>
-      </section>
-      {error ? <p className="error">{error}</p> : null}
-      <section className="layout-grid" style={{ marginTop: 20 }}>
-        <form className="panel stack-md" onSubmit={placeOrder}>
-          <h3>Shipping address</h3>
-          {profile?.addresses?.length ? (
-            <label className="input-group">
-              <span>Saved addresses</span>
-              <select className="input" value={selectedAddressId} onChange={(event) => setSelectedAddressId(event.target.value)}>
-                {profile.addresses.map((address) => (
-                  <option key={address.id} value={address.id}>
-                    {address.label} - {address.city}
-                  </option>
-                ))}
-                <option value="">Use custom address</option>
-              </select>
-            </label>
-          ) : null}
-          {!selectedAddressId
-            ? Object.entries(customAddress).map(([key, value]) => (
-                <Input
-                  key={key}
-                  label={key.replaceAll("_", " ")}
-                  value={value}
-                  onChange={(event) => setCustomAddress((current) => ({ ...current, [key]: event.target.value }))}
-                />
-              ))
-            : null}
-          <label className="input-group">
-            <span>Payment method</span>
-            <select className="input" value={paymentMethod} onChange={(event) => setPaymentMethod(event.target.value)}>
-              <option value="UPI">UPI</option>
-              <option value="Card">Card</option>
-              <option value="Cash on Delivery">Cash on Delivery</option>
-            </select>
-          </label>
-          <Button disabled={loading} type="submit">
-            {loading ? "Placing order..." : "Place order"}
-          </Button>
-        </form>
-        <aside className="sidebar panel">
-          <h3>Order confirmation</h3>
-          {cart.items.map((item) => (
-            <div className="summary-row" key={item.product_id}>
-              <span>
-                {item.name} x {item.quantity}
-              </span>
-              <strong>{formatCurrency(item.line_total)}</strong>
-            </div>
-          ))}
-          <div className="summary-row" style={{ marginTop: 16 }}>
-            <span>Total</span>
-            <strong>{formatCurrency(cart.totalAmount)}</strong>
-          </div>
-        </aside>
-      </section>
-    </div>
+        </Typography>
+        <Typography color="text.secondary">
+          Pick a saved address or enter a new one, then simulate payment and place the order.
+        </Typography>
+      </Paper>
+      {error ? (
+        <Typography color="error" sx={{ mb: 2 }} variant="body2">
+          {error}
+        </Typography>
+      ) : null}
+      <Grid container spacing={3}>
+        <Grid size={{ xs: 12, md: 7 }}>
+          <Paper component="form" onSubmit={placeOrder} sx={{ p: 2 }} variant="outlined">
+            <Typography gutterBottom variant="h6">
+              Shipping address
+            </Typography>
+            {profile?.addresses?.length ? (
+              <FormControl fullWidth margin="normal" size="small">
+                <InputLabel id="addr-label">Saved addresses</InputLabel>
+                <Select
+                  id="addr"
+                  label="Saved addresses"
+                  labelId="addr-label"
+                  value={selectedAddressId}
+                  onChange={(event) => setSelectedAddressId(event.target.value)}
+                >
+                  {profile.addresses.map((address) => (
+                    <MenuItem key={address.id} value={address.id}>
+                      {address.label} - {address.city}
+                    </MenuItem>
+                  ))}
+                  <MenuItem value="">Use custom address</MenuItem>
+                </Select>
+              </FormControl>
+            ) : null}
+            {!selectedAddressId
+              ? Object.entries(customAddress).map(([key, value]) => (
+                  <Input
+                    key={key}
+                    label={key.replaceAll("_", " ")}
+                    value={value}
+                    onChange={(event) => setCustomAddress((current) => ({ ...current, [key]: event.target.value }))}
+                  />
+                ))
+              : null}
+            <FormControl fullWidth margin="normal" size="small">
+              <InputLabel id="pay-label">Payment method</InputLabel>
+              <Select
+                id="pay"
+                label="Payment method"
+                labelId="pay-label"
+                value={paymentMethod}
+                onChange={(event) => setPaymentMethod(event.target.value)}
+              >
+                <MenuItem value="UPI">UPI</MenuItem>
+                <MenuItem value="Card">Card</MenuItem>
+                <MenuItem value="Cash on Delivery">Cash on Delivery</MenuItem>
+              </Select>
+            </FormControl>
+            <Box sx={{ mt: 2 }}>
+              <Button disabled={loading} type="submit">
+                {loading ? "Placing order..." : "Place order"}
+              </Button>
+            </Box>
+          </Paper>
+        </Grid>
+        <Grid size={{ xs: 12, md: 5 }}>
+          <Paper sx={{ p: 2 }} variant="outlined">
+            <Typography gutterBottom variant="h6">
+              Order confirmation
+            </Typography>
+            {cart.items.map((item) => (
+              <Stack direction="row" justifyContent="space-between" key={item.product_id} sx={{ py: 1, borderBottom: 1, borderColor: "divider" }}>
+                <Typography variant="body2">
+                  {item.name} x {item.quantity}
+                </Typography>
+                <Typography fontWeight={600} variant="body2">
+                  {formatCurrency(item.line_total)}
+                </Typography>
+              </Stack>
+            ))}
+            <Stack direction="row" justifyContent="space-between" sx={{ mt: 2 }}>
+              <Typography fontWeight={600}>Total</Typography>
+              <Typography fontWeight={700}>{formatCurrency(cart.totalAmount)}</Typography>
+            </Stack>
+          </Paper>
+        </Grid>
+      </Grid>
+    </Container>
   );
 }
 

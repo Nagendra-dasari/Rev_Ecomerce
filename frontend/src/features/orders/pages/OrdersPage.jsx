@@ -1,5 +1,9 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 
 import { fetchOrders } from "../ordersSlice";
 import OrderList from "../components/OrderList";
@@ -13,17 +17,23 @@ function OrdersPage() {
   }, [dispatch]);
 
   return (
-    <section>
-      <div className="section-head">
-        <div>
-          <span className="tag">Orders</span>
-          <h2>Track local purchase activity</h2>
-        </div>
-      </div>
-      {status === "loading" ? <p>Loading orders...</p> : null}
-      {error ? <p className="error">{error}</p> : null}
-      {items.length === 0 ? <p className="muted">No orders placed yet.</p> : <OrderList orders={items} />}
-    </section>
+    <Box>
+      <Stack spacing={1} sx={{ mb: 2 }}>
+        <Chip color="primary" label="Orders" size="small" variant="outlined" />
+        <Typography variant="h5">Track local purchase activity</Typography>
+      </Stack>
+      {status === "loading" ? <Typography>Loading orders...</Typography> : null}
+      {error ? (
+        <Typography color="error" variant="body2">
+          {error}
+        </Typography>
+      ) : null}
+      {items.length === 0 ? (
+        <Typography color="text.secondary">No orders placed yet.</Typography>
+      ) : (
+        <OrderList orders={items} />
+      )}
+    </Box>
   );
 }
 

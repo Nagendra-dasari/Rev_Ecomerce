@@ -87,6 +87,7 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.status = "succeeded";
+        state.error = "";
         state.user = action.payload.user;
         state.token = action.payload.access_token;
         localStorage.setItem("nagendra-auth", JSON.stringify({ user: state.user, token: state.token }));
@@ -102,6 +103,7 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.status = "succeeded";
+        state.error = "";
         state.user = action.payload.user;
         state.token = action.payload.access_token;
         localStorage.setItem("nagendra-auth", JSON.stringify({ user: state.user, token: state.token }));
@@ -117,6 +119,7 @@ const authSlice = createSlice({
       })
       .addCase(requestResetToken.fulfilled, (state, action) => {
         state.status = "succeeded";
+        state.error = "";
         state.resetToken = action.payload.reset_token;
         state.resetMessage = action.payload.message;
       })
@@ -130,6 +133,7 @@ const authSlice = createSlice({
       })
       .addCase(confirmResetPassword.fulfilled, (state, action) => {
         state.status = "succeeded";
+        state.error = "";
         state.resetMessage = action.payload.message;
         state.resetToken = "";
       })

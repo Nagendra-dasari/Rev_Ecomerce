@@ -1,11 +1,13 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
+
+import { renderWithTheme } from "../test/testUtils";
 import Home from "./Home";
 
 describe("Home page", () => {
   test("renders hero text and links", () => {
-    render(
+    renderWithTheme(
       <MemoryRouter>
         <Home />
       </MemoryRouter>,

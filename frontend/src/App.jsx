@@ -1,12 +1,13 @@
 import React from "react";
+import Box from "@mui/material/Box";
 
 import AppRoutes from "./routes/AppRoutes";
 
 function App() {
   return (
-    <div style={{ width: "100%", minHeight: "100vh" }}>
+    <Box sx={{ width: "100%", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <AppRoutes />
-    </div>
+    </Box>
   );
 }
 
